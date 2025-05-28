@@ -6,6 +6,7 @@ import com.example.todoList.entity.Todo;
 import com.example.todoList.enums.Status;
 import com.example.todoList.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,22 +18,13 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
 
+    // model mapper import
+    private final ModelMapper modelMapper;
+
     public List<TodoResponseDto> getAllTodos() {
         return todoRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(todo -> modelMapper.map(todo, TodoResponseDto.class))
                 .collect(Collectors.toList());
-    }
-
-    private TodoResponseDto convertToDto(Todo todo) {
-        TodoResponseDto todoResponseDto = new TodoResponseDto();
-        todoResponseDto.setId(todo.getId());
-        todoResponseDto.setTitle(todo.getTitle());
-        todoResponseDto.setDescription(todo.getDescription());
-        todoResponseDto.setStatus(todo.getStatus());
-        todoResponseDto.setDueDate(todo.getDueDate());
-        todoResponseDto.setCreatedAt(todo.getCreatedAt());
-        todoResponseDto.setUpdatedAt(todo.getUpdatedAt());
-        return todoResponseDto;
     }
 
     public TodoResponseDto createTodo(TodoRequestDto todoRequestDto) {
@@ -46,14 +38,14 @@ public class TodoService {
 
         Todo savedTodo = todoRepository.save(todo);
 
-        return convertToDto(savedTodo);
+        return modelMapper.map(savedTodo, TodoResponseDto.class);
     }
 
     public  TodoResponseDto getTodoById(Long id) {
         Todo todo = todoRepository.findById(id).orElseThrow(()
                 -> new RuntimeException("Can't find todo with id: " + id));
 
-        return convertToDto(todo);
+        return modelMapper.map(todo, TodoResponseDto.class);
     }
 
     public TodoResponseDto updateTodo(Long id, TodoRequestDto todoRequestDto) {
@@ -67,7 +59,7 @@ public class TodoService {
 
         todoRepository.save(todo);
 
-        return convertToDto(todo);
+        return modelMapper.map(todo, TodoResponseDto.class);
     }
 
     public void deleteTodo(Long id) {
