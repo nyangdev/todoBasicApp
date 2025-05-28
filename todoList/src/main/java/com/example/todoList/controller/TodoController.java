@@ -1,6 +1,7 @@
 package com.example.todoList.controller;
 
-import com.example.todoList.dto.TodoRequestDto;
+import com.example.todoList.dto.TodoCreateDto;
+import com.example.todoList.dto.TodoUpdateRequestDto;
 import com.example.todoList.dto.TodoResponseDto;
 import com.example.todoList.entity.Todo;
 import com.example.todoList.service.TodoService;
@@ -32,13 +33,13 @@ public class TodoController {
     }
 
     @PostMapping
-    public ResponseEntity<TodoResponseDto> createTodo(@RequestBody TodoRequestDto todoRequestDto) {
+    public ResponseEntity<TodoResponseDto> createTodo(@RequestBody TodoCreateDto todoRequestDto) {
         TodoResponseDto todo = todoService.createTodo(todoRequestDto);
         return new ResponseEntity<>(todo, HttpStatus.CREATED); // 201 CREATED
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long id, @RequestBody TodoRequestDto todoRequestDto) {
+    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long id, @RequestBody TodoUpdateRequestDto todoRequestDto) {
 
         TodoResponseDto todo = todoService.updateTodo(id, todoRequestDto);
 

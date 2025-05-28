@@ -1,6 +1,7 @@
 package com.example.todoList.service;
 
-import com.example.todoList.dto.TodoRequestDto;
+import com.example.todoList.dto.TodoCreateDto;
+import com.example.todoList.dto.TodoUpdateRequestDto;
 import com.example.todoList.dto.TodoResponseDto;
 import com.example.todoList.entity.Todo;
 import com.example.todoList.enums.Status;
@@ -27,7 +28,7 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-    public TodoResponseDto createTodo(TodoRequestDto todoRequestDto) {
+    public TodoResponseDto createTodo(TodoCreateDto todoRequestDto) {
         Todo todo = new Todo();
         todo.setTitle(todoRequestDto.getTitle());
         todo.setDescription(todoRequestDto.getDescription());
@@ -48,7 +49,7 @@ public class TodoService {
         return modelMapper.map(todo, TodoResponseDto.class);
     }
 
-    public TodoResponseDto updateTodo(Long id, TodoRequestDto todoRequestDto) {
+    public TodoResponseDto updateTodo(Long id, TodoUpdateRequestDto todoRequestDto) {
         Todo todo = todoRepository.findById(id).orElseThrow(()
         -> new RuntimeException("Can't find todo with id: " + id));
 
