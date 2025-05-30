@@ -1,14 +1,14 @@
 package com.example.todoList.dto;
 
 import com.example.todoList.enums.Status;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@AllArgsConstructor
 public class TodoResponseDto {
 
     private Long id;
