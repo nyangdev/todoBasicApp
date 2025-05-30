@@ -5,6 +5,7 @@ import com.example.todoList.dto.TodoUpdateRequestDto;
 import com.example.todoList.dto.TodoResponseDto;
 import com.example.todoList.entity.Todo;
 import com.example.todoList.service.TodoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,15 +34,15 @@ public class TodoController {
     }
 
     @PostMapping
-    public ResponseEntity<TodoResponseDto> createTodo(@RequestBody TodoCreateDto todoRequestDto) {
-        TodoResponseDto todo = todoService.createTodo(todoRequestDto);
+    public ResponseEntity<TodoResponseDto> createTodo(@RequestBody @Valid TodoCreateDto todoCreateRequestDto) {
+        TodoResponseDto todo = todoService.createTodo(todoCreateRequestDto);
         return new ResponseEntity<>(todo, HttpStatus.CREATED); // 201 CREATED
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long id, @RequestBody TodoUpdateRequestDto todoRequestDto) {
+    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long id, @RequestBody @Valid TodoUpdateRequestDto todoUpdateRequestDto) {
 
-        TodoResponseDto todo = todoService.updateTodo(id, todoRequestDto);
+        TodoResponseDto todo = todoService.updateTodo(id, todoUpdateRequestDto);
 
         return new ResponseEntity<>(todo, HttpStatus.OK);
     }
