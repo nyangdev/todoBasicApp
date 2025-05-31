@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ValidationErrorResponse {
+public class ErrorDetailResponse {
 
     private String field;
     private String message;
