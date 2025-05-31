@@ -13,9 +13,9 @@ public class ErrorResponse {
     private int code;
     private String message;
     private LocalDateTime timestamp;
-    private List<ValidationErrorResponse> errors;
+    private List<ErrorDetailResponse> errors;
 
-    public ErrorResponse(int code, String message, List<ValidationErrorResponse> errors) {
+    public ErrorResponse(int code, String message, List<ErrorDetailResponse> errors) {
         this.code = code;
         this.message = message;
         this.errors = errors;
