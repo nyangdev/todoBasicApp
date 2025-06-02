@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
                     List.of(error)
             );
 
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
         // 다른 runtime error
