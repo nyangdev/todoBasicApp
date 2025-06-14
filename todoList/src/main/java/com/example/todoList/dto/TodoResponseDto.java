@@ -1,7 +1,6 @@
 package com.example.todoList.dto;
 
 import com.example.todoList.enums.Status;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

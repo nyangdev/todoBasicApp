@@ -12,6 +12,19 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
+        ErrorDetailResponse error = new ErrorDetailResponse(ex.getField(), ex.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                ex.getStatus().value(),
+                ex.getMessage(),
+                List.of(error)
+        );
+
+        return ResponseEntity.status(ex.getStatus()).body(errorResponse);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
 
@@ -61,34 +74,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException ex)
-
-    {
-
+    public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException ex) {
         String rawMessage = ex.getMessage();
 
-        if(rawMessage != null && rawMessage.contains("Can't find")) {
-
+        // 특정 키워드 포함 시 404 처리
+        if (rawMessage != null && rawMessage.contains("Can't find")) {
             ErrorDetailResponse error = new ErrorDetailResponse("Not found", rawMessage);
-
             ErrorResponse errorResponse = new ErrorResponse(
                     HttpStatus.NOT_FOUND.value(),
                     "Todo not found",
                     List.of(error)
             );
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
 
-        // 다른 runtime error
-        ErrorDetailResponse error = new ErrorDetailResponse("error", "Unexpected error occurred");
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),   // 500
-                "Internal Server Error",
-                List.of(error)
-        );
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        // 다른 RuntimeException → CustomException으로 다시 던짐
+        throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "internal", rawMessage != null ? rawMessage : "Unexpected runtime error");
     }
+
+
 }
