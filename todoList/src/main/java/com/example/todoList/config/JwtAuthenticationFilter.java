@@ -1,9 +1,14 @@
 package com.example.todoList.config;
 
 import com.example.todoList.entity.User;
+import com.example.todoList.exception.ErrorResponse;
 import com.example.todoList.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -33,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
+
             if (jwtUtil.isValidToken(token) && !jwtUtil.isTokenExpired(token)) {
                 String username = jwtUtil.extractUsername(token);
 
@@ -42,6 +48,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
+            }
+
+            else {
+                // ErrorResponse 객체 생성
+                ErrorResponse errorResponse = new ErrorResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "Invalid Token",
+                        null // errors 리스트가 따로 없다면 null 또는 Collections.emptyList() 사용
+                );
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.registerModule(new JavaTimeModule());
+                mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+                String json = mapper.writeValueAsString(errorResponse);
+                response.getWriter().write(json);
+                return; // 필터 중단
             }
         }
 
