@@ -1,6 +1,6 @@
 package com.example.todoList.service;
 
-import com.example.todoList.config.JwtUtil;
+import com.example.todoList.security.JwtUtil;
 import com.example.todoList.dto.LoginRequestDto;
 import com.example.todoList.dto.TokenResponseDto;
 import com.example.todoList.dto.SignupResponseDto;

@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public class TodoController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             )
     })
+    @PreAuthorize("hasRole('ROLE_USER') and @authChecker.checkTodoOwner(#id, principal.username)")
     // paging treatment
     @GetMapping
     public ResponseEntity<PagedResponseDto<TodoResponseDto>> getPagedTodos(
@@ -66,6 +68,7 @@ public class TodoController {
             )
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') and @authChecker.checkTodoOwner(#id, principal.username)")
     public ResponseEntity<TodoResponseDto> getTodoById(@PathVariable Long id) {
         TodoResponseDto todo = todoService.getTodoById(id);
         return ResponseEntity.ok(todo);
@@ -81,6 +84,7 @@ public class TodoController {
             )
     })
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<TodoResponseDto> createTodo(@RequestBody @Valid TodoCreateDto todoCreateRequestDto) {
         TodoResponseDto todo = todoService.createTodo(todoCreateRequestDto);
         return new ResponseEntity<>(todo, HttpStatus.CREATED); // 201 CREATED
@@ -101,6 +105,7 @@ public class TodoController {
     })
     @Operation(summary = "Todo 수정하기", description = "넘어오는 id에 해당하는 todo를 수정할 수 있습니다.")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') and @authChecker.checkTodoOwner(#id, principal.username)")
     public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long id, @RequestBody @Valid TodoUpdateRequestDto todoUpdateRequestDto) {
 
         TodoResponseDto todo = todoService.updateTodo(id, todoUpdateRequestDto);
@@ -118,6 +123,7 @@ public class TodoController {
     })
     @Operation(summary = "Todo 삭제하기")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') and @authChecker.checkTodoOwner(#id, principal.username)")
     public ResponseEntity<Todo> deleteTodo(@PathVariable Long id) {
         todoService.deleteTodo(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

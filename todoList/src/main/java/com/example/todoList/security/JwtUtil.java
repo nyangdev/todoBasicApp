@@ -1,4 +1,4 @@
-package com.example.todoList.config;
+package com.example.todoList.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
