@@ -77,6 +77,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException ex) {
         String rawMessage = ex.getMessage();
 
+        if (rawMessage != null && rawMessage.contains("Access Denied")) {
+            ErrorResponse response = new ErrorResponse(
+                    HttpStatus.FORBIDDEN.value(),
+                    "Access Denied",  // 사용자 친화 메시지
+                    null
+            );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
         // 특정 키워드 포함 시 404 처리
         if (rawMessage != null && rawMessage.contains("Can't find")) {
             ErrorDetailResponse error = new ErrorDetailResponse("Not found", rawMessage);
